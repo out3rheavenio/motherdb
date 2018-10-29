@@ -7,7 +7,7 @@ RUN apt-get update \
 
 FROM ubuntu:bionic-20180526
 
-LABEL maintainer="sameer@damagehead.com"
+LABEL maintainer="m3rl1n@out3rheaven.io"
 
 ENV PG_APP_HOME="/etc/docker-postgresql" \
     PG_VERSION=10 \
@@ -34,6 +34,15 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 COPY runtime/ ${PG_APP_HOME}/
+
+RUN apt-get update && \
+    apt-get install software-properties-common -y
+
+RUN add-apt-repository ppa:timescale/timescaledb-ppa \
+    && apt-get update \
+    && apt-get install timescaledb-postgresql-10 curl -y \
+    && curl -L -O https://www.zombodb.com/releases/v10-1.0.0b7/zombodb_bionic_pg10-10-1.0.0b7_amd64.deb \
+    && dpkg -i zombodb_bionic_pg10-10-1.0.0b7_amd64.deb
 
 COPY entrypoint.sh /sbin/entrypoint.sh
 
